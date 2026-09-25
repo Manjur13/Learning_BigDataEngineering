@@ -1,0 +1,48 @@
+# OS and editor files
+.DS_Store
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+.venv/
+venv/
+env/
+ENV/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Build and test output
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Logs and local data
+*.log
+*.sqlite
+*.db
+
+# Large/generated data
+*.csv
+*.parquet
+*.avro
+*.orc
+*.zip
+*.tar
+*.gz
+*.jar
