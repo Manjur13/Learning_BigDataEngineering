@@ -186,3 +186,12 @@ INSERT INTO OrderDetails (OrderID, ProductID, Quantity) VALUES
 (1013, 12, 6), (1013, 7, 4),
 (1014, 8, 25), (1014, 3, 48), (1014, 1, 12),
 (1015, 5, 40), (1015, 4, 40);
+
+SELECT * FROM Categories;
+SELECT * FROM Suppliers;
+SELECT * FROM Products;
+SELECT * FROM Customers;
+SELECT * FROM Employees;
+SELECT * FROM Shippers;
+SELECT * FROM Orders;
+SELECT * FROM OrderDetails;
