@@ -1,0 +1,24 @@
+schema = StructType (
+StructField("customer_id", IntegerType(), True),
+StructField("name", StringType(), True),
+StructField("city", StringType(), True),
+StructField("state", StringType(), True),
+StructField("country", StringType(), True),
+StructField("registration_date", StringType(), True),
+StructField("is_active", BooleanType(), True),
+)
+
+
+
+
+from pyspark.sql.types import StructType, StructField, IntegerType, StringType, BooleanType, DateType
+
+schema = StructType([
+    StructField("customer_id", IntegerType(), True),
+    StructField("name", StringType(), True),
+    StructField("city", StringType(), True),
+    StructField("state", StringType(), True),
+    StructField("country", StringType(), True),
+    StructField("registration_date", DateType(), True),  # Enforcing Date Type
+    StructField("is_active", BooleanType(), True)  # Enforcing Boolean Type
+]) 0

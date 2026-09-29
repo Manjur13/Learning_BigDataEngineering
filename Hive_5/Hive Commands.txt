@@ -1,0 +1,84 @@
+> hive --version
+
+
+> vi /etc/hive/conf/hive-site.xml (for Hive Properties, we got Username and password as well from here. )
+
+> hive
+
+(inside terminal)
+> show databases ;
+> create database
+
+( make sure the commands end with a semicolon
+
+
+Another Way of Running Hive --> Beeline
+
+> !connect jdbc:hive2://localhost:10000/default     ---> to connect to Hive Server
+
+
+
+set hive.execution.engine;
+
+
+set hive.execution.engine =mr;
+
+
+
+control + L   (in mac)
+
+show databases
+
+use database <db-name>
+
+
+create table customers (
+customer_id INT,
+name STRING,
+city STRING,
+state STRING,
+country STRING,
+registration_date STRING,
+is_active BOOLEAN
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED By ','
+STORED AS TEXTFILE;
+
+insert into customer VALUES
+
+ set hive.metastore.warehouse.dir;
+ 
+ 
+ 
+ 
+load data inpath '/data/customer_hive.csv' into table customers;
+
+
+
+
+<------------ Accessing Metadata ----------------->
+
+
+
+1. mysql -u hive -p
+
+<Enter your password taken from conf file at  vi /etc/hive/conf/hive-site.xml >
+
+2. ( if you face issue with above once, try this out)
+
+sudo systemctl stop mysql
+sudo mysqld_safe --skip--grant-tables &
+
+sudo systemctl start mysql
+
+mysql -u root 
+
+
+
+( press enter if it ask for password )
+
+
+
+<value>Pw1+tfk+8h0R</value>
+<value>hive/value>

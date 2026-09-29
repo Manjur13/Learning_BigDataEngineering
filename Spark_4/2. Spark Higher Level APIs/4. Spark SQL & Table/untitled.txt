@@ -1,0 +1,10 @@
+spark.sql("""
+CREATE TABLE IF NOT EXISTS customers (
+customer_id INT,
+name STRING,
+city STRING,
+registration_date STRING,
+is_active BOOLEAN
+) USING CSV
+""")
+
