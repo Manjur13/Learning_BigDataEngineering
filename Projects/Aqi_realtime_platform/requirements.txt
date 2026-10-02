@@ -1,0 +1,8 @@
+kafka-python
+requests
+pyspark==3.5.3
+streamlit
+pandas
+pydeck
+python-dotenv
+streamlit-autorefresh
