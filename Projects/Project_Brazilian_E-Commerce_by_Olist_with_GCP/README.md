@@ -61,6 +61,10 @@ Project_Brazilian_E-Commerce_by_Olist_with_GCP/
 └── README.md
 ```
 
+## Screenshots and Output Images
+
+Store project screenshots and other visual results in an `Output/` folder at the project root, alongside `README.md`. Link each image from this README with a relative path, for example `![Spark result](Output/spark_result.png)`. Data products created by the notebooks are written to the configured HDFS or Google Cloud Storage paths instead; update those paths in Module 5 for your environment.
+
 ## Running the Notebooks
 
 The notebooks were authored for a Spark environment with access to HDFS and, for the serving examples, Google Cloud Storage. They are not standalone local scripts.

@@ -105,6 +105,10 @@ reads `data/aqi_aggregates/`, and writes one compacted row per city to
 `data/aqi_daily_summary/`. Point your `AIRFLOW_HOME`'s dags folder at
 `airflow_dags/` (or symlink it in) to pick it up.
 
+## Screenshots and Output Data
+
+Project screenshots are stored in `Output/`: [Streamlit dashboard](Output/streamlit_output.png) and [Hive output](Output/hive_output.png). Add future screenshots to this folder and link them from this README with relative paths. Runtime data is separate: the streaming Parquet aggregates and alerts are written under `data/aqi_aggregates/` and `data/alerts/`, and the daily rollup is written under `data/aqi_daily_summary/`.
+
 ## What broke / design notes
 
 - **OpenAQ v3 has no `city=` filter on `/locations`.** The common recipe for

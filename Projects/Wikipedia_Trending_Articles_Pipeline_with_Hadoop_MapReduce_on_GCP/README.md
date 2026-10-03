@@ -122,10 +122,13 @@ The average is formatted to one decimal place, the ratio to two decimal places, 
 ## Example Results
 
 Screenshots below are from the recorded Hadoop run for `2026-09-27`.
+The project screenshots and other visual output files are kept in `Output/`.
 
 ![Trending job output and Hadoop counters](Output/final_output.png)
 
 ![Top 20 pageviews by day](Output/output_per_day_top20_views.png)
+
+![Cluster memory usage](Output/memory_usages.png)
 
 ## Notes and Limitations
 

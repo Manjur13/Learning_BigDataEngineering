@@ -39,3 +39,7 @@ The ETL pipeline is orchestrated in Airflow using a DAG (Directed Acyclic Graph)
 7. Load (L): 
 8. The transformed data is loaded into a Postgres table using PostgresHook. 
 9. If the target table doesn’t exist in the Postgres database, it is created automatically as part of the DAG using a create table task.
+
+## Screenshots and Outputs
+
+Store project screenshots or other files meant to be viewed from GitHub in this project's `Output/` folder. Link them from this README using paths relative to this folder, for example `![Pipeline screenshot](Output/pipeline.png)`. The ETL's primary data output is the `nasa_apod` table in Postgres, not an image file.
