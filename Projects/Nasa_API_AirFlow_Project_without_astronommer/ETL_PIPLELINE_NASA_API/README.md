@@ -43,3 +43,13 @@ The ETL pipeline is orchestrated in Airflow using a DAG (Directed Acyclic Graph)
 ## Screenshots and Outputs
 
 Store project screenshots or other files meant to be viewed from GitHub in this project's `Output/` folder. Link them from this README using paths relative to this folder, for example `![Pipeline screenshot](Output/pipeline.png)`. The ETL's primary data output is the `nasa_apod` table in Postgres, not an image file.
+
+## NASA APOD dashboard
+
+The Airflow DAG also builds a self-contained web dashboard from the records in the `nasa_apod` PostgreSQL table. No separate frontend server or API key in the browser is needed.
+
+1. Start the local Airflow and PostgreSQL services and trigger the `nasa_apod_postgres` DAG.
+2. Wait for the `build_dashboard` task to succeed after `load_data`.
+3. Open `dags/nasa_apod_dashboard.html` in a browser. The newest saved APOD appears first; select an entry or search the archive to browse PostgreSQL history.
+
+Each successful DAG run rebuilds the dashboard from PostgreSQL, so the HTML contains the records Airflow has stored. The generated HTML is ignored by Git; the dashboard template and DAG code are versioned.

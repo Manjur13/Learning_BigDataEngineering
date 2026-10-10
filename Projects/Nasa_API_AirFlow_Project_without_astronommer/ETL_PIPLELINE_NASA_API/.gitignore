@@ -16,3 +16,4 @@ airflow.db
 
 **/.astro/dbt_metadata.json
 **/.astro/manifest.slim.json
+dags/nasa_apod_dashboard.html

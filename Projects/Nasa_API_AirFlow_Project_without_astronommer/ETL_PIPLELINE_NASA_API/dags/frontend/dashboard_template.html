@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090d18">
+  <meta name="description" content="NASA's Astronomy Picture of the Day, collected by Airflow and archived in PostgreSQL.">
+  <title>Orbit — NASA Astronomy Picture of the Day</title>
+  <style>
+    :root{color-scheme:dark;--ink:#f5f4ef;--muted:#a6adbd;--faint:#737d91;--panel:#111725;--line:rgba(221,230,255,.11);--accent:#a8c7ff;--warm:#ffbd8a;--radius:22px}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;color:var(--ink);background:radial-gradient(ellipse at 80% -10%,rgba(89,119,187,.2),transparent 38rem),radial-gradient(ellipse at -10% 48%,rgba(120,82,121,.12),transparent 36rem),#090d18;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55}
+    button,input{font:inherit}a{color:inherit}.shell{width:min(1160px,calc(100% - 40px));margin:auto}
+    .topbar{min-height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:720;letter-spacing:-.03em}.mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid #a8c7ff5c;border-radius:50%;color:var(--accent);font-size:19px}.brand small{display:block;color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase}
+    .status{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}.dot{width:7px;height:7px;border-radius:50%;background:#79d5a3;box-shadow:0 0 14px #79d5a399}
+    .intro{padding:54px 0 28px}.eyebrow{color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+    h1{margin:12px 0 10px;font-size:clamp(36px,6vw,66px);line-height:.98;letter-spacing:-.065em;font-weight:650}.intro p{max-width:590px;margin:0;color:var(--muted);font-size:15px}
+    .layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(290px,.8fr);gap:20px;padding:18px 0 56px;align-items:start}
+    .hero,.history{overflow:hidden;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(145deg,rgba(23,31,48,.96),rgba(15,21,34,.96));box-shadow:0 24px 80px #0003}
+    .media{position:relative;min-height:280px;aspect-ratio:16/9;display:grid;place-items:center;overflow:hidden;background:#0b1020}.media img,.media iframe{position:absolute;inset:0;width:100%;height:100%;min-height:280px;border:0;object-fit:cover}.media iframe{background:#05070d}
+    .placeholder{max-width:360px;padding:28px;color:var(--muted);text-align:center;font-size:13px}.placeholder strong{display:block;margin-bottom:8px;color:var(--ink);font-size:17px}
+    .badge{position:absolute;z-index:2;top:16px;left:16px;padding:7px 10px;border:1px solid #ffffff33;border-radius:99px;background:#080c16a3;color:#fff;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;backdrop-filter:blur(10px)}
+    .shade{position:absolute;z-index:1;inset:48% 0 0;pointer-events:none;background:linear-gradient(transparent,#070a12a6)}
+    .content{padding:27px clamp(20px,4vw,38px) 32px}.date-line{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--warm);font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
+    h2{margin:11px 0 12px;font-size:clamp(25px,3.3vw,39px);line-height:1.12;letter-spacing:-.045em;font-weight:620}.explanation{margin:0;color:#b8bfcd;font-size:14px;line-height:1.8;white-space:pre-line}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.button{display:inline-flex;justify-content:center;align-items:center;min-height:39px;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:#ffffff09;color:var(--ink);text-decoration:none;font-size:12px;font-weight:650}.button:hover{border-color:#a8c7ff80;background:#a8c7ff14}.button.primary{border-color:transparent;background:#dce7ff;color:#101726}
+    .history{position:sticky;top:20px}.history-head{padding:22px 21px 16px;border-bottom:1px solid var(--line)}.history-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}h3{margin:0;font-size:17px;letter-spacing:-.025em}.count{color:var(--faint);font-size:11px}
+    .search{width:100%;height:39px;margin-top:15px;padding:0 12px;border:1px solid var(--line);border-radius:10px;outline:none;background:#04070d59;color:var(--ink);font-size:12px}.search:focus{border-color:#a8c7ffa6}.search::placeholder{color:#7e879a}
+    .list{max-height:600px;overflow:auto;padding:8px}.item{width:100%;display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;padding:10px;border:1px solid transparent;border-radius:13px;background:transparent;color:inherit;text-align:left;cursor:pointer}.item:hover,.item[aria-current=true]{border-color:#a8c7ff30;background:#a8c7ff10}
+    .thumb{width:76px;height:65px;display:grid;place-items:center;overflow:hidden;border-radius:9px;background:#20283a;color:var(--muted);font-size:9px}.thumb img{width:100%;height:100%;object-fit:cover}
+    .copy{min-width:0;align-self:center}.item-date{display:block;margin-bottom:4px;color:var(--warm);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}.item-title{display:-webkit-box;overflow:hidden;color:#e9ebf1;font-size:12px;font-weight:620;line-height:1.4;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+    .empty{padding:28px 16px;color:var(--muted);font-size:12px;text-align:center}.footer{display:flex;justify-content:space-between;gap:16px;padding:18px 0 28px;border-top:1px solid var(--line);color:var(--faint);font-size:10px}.footer strong{color:#b5bdcc;font-weight:600}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:800px){.layout{grid-template-columns:1fr}.history{position:static}.list{max-height:420px}.intro{padding-top:42px}}
+    @media(max-width:520px){.shell{width:min(100% - 24px,1160px)}.topbar{min-height:66px}.status{font-size:10px}.intro{padding:36px 0 16px}.layout{gap:14px;padding-top:12px}.media,.media img,.media iframe{min-height:230px}.footer{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <header class="shell topbar">
+    <div class="brand"><span class="mark" aria-hidden="true">✦</span><span>ORBIT<small>NASA daily archive</small></span></div>
+    <div class="status"><span class="dot" aria-hidden="true"></span><span>Airflow pipeline · PostgreSQL archive</span></div>
+  </header>
+  <main class="shell">
+    <section class="intro" aria-labelledby="page-title">
+      <div class="eyebrow">A window into the universe</div>
+      <h1 id="page-title">The cosmos,<br>one day at a time.</h1>
+      <p>NASA’s Astronomy Picture of the Day, collected by an Airflow pipeline and preserved in PostgreSQL.</p>
+    </section>
+    <section class="layout" aria-label="Daily astronomy picture and archive">
+      <article class="hero" aria-live="polite">
+        <div class="media" id="media"><div class="placeholder"><strong>Waiting for your first Airflow run</strong>Trigger <code>nasa_apod_postgres</code> in Airflow. When the DAG finishes, reopen this dashboard to see the NASA picture and saved history.</div></div>
+        <div class="content">
+          <div class="date-line"><time id="date"></time><span id="kind"></span></div>
+          <h2 id="title">Your daily view of space</h2>
+          <p class="explanation" id="explanation">Each successful DAG run loads NASA APOD data into PostgreSQL, then rebuilds this page from the saved records.</p>
+          <div class="actions" id="actions" hidden><a class="button primary" id="original" href="#" target="_blank" rel="noopener noreferrer">View on NASA ↗</a></div>
+        </div>
+      </article>
+      <aside class="history" aria-labelledby="history-title">
+        <div class="history-head">
+          <div class="history-heading"><h3 id="history-title">Saved in orbit</h3><span class="count" id="count">0 records</span></div>
+          <label class="sr-only" for="search">Search saved APOD records</label>
+          <input class="search" id="search" type="search" placeholder="Search the archive…" autocomplete="off">
+        </div>
+        <div class="list" id="list" aria-live="polite"><div class="empty">No PostgreSQL records yet. Run the Airflow DAG to begin your archive.</div></div>
+      </aside>
+    </section>
+  </main>
+  <footer class="shell footer"><span>Images and astronomy data are provided by <strong>NASA APOD</strong>.</span><span>Automated with Apache Airflow · Stored in PostgreSQL</span></footer>
+  <script>
+    const items = __APOD_DATA__;
+    const media = document.getElementById("media");
+    const list = document.getElementById("list");
+    const search = document.getElementById("search");
+    const count = document.getElementById("count");
+    const date = document.getElementById("date");
+    const title = document.getElementById("title");
+    const explanation = document.getElementById("explanation");
+    const kind = document.getElementById("kind");
+    const actions = document.getElementById("actions");
+    const original = document.getElementById("original");
+
+    function formatDate(value) {
+      if (!value) return "Date unavailable";
+      const parsed = new Date(`${value}T12:00:00`);
+      return Number.isNaN(parsed.getTime()) ? value : new Intl.DateTimeFormat(undefined, {year:"numeric",month:"long",day:"numeric"}).format(parsed);
+    }
+
+    function safeUrl(value) {
+      try { const url = new URL(value); return url.protocol === "https:" ? url.href : null; }
+      catch { return null; }
+    }
+
+    function showItem(item) {
+      media.replaceChildren();
+      const url = safeUrl(item.url);
+      const badge = document.createElement("span");
+      badge.className = "badge";
+      badge.textContent = item.media_type === "video" ? "NASA video" : "Today in space";
+      media.append(badge);
+
+      if (url && item.media_type === "video") {
+        const frame = document.createElement("iframe");
+        frame.src = url;
+        frame.title = item.title || "NASA APOD video";
+        frame.loading = "lazy";
+        frame.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
+        frame.allowFullscreen = true;
+        frame.referrerPolicy = "strict-origin-when-cross-origin";
+        media.append(frame);
+      } else if (url) {
+        const image = document.createElement("img");
+        image.src = url;
+        image.alt = item.title || "NASA Astronomy Picture of the Day";
+        image.addEventListener("error", () => {
+          image.remove();
+          const message = document.createElement("div");
+          message.className = "placeholder";
+          message.textContent = "NASA's image could not be loaded. You can still open the original APOD page.";
+          media.append(message);
+        }, {once:true});
+        media.append(image);
+      } else {
+        const message = document.createElement("div");
+        message.className = "placeholder";
+        message.textContent = "No valid NASA media URL was saved for this record.";
+        media.append(message);
+      }
+
+      const shade = document.createElement("div");
+      shade.className = "shade";
+      media.append(shade);
+      date.dateTime = item.date || "";
+      date.textContent = formatDate(item.date);
+      kind.textContent = item.media_type === "video" ? "Video" : "Image";
+      title.textContent = item.title || "Untitled NASA APOD";
+      explanation.textContent = item.explanation || "NASA did not provide an explanation for this entry.";
+      actions.hidden = !url;
+      original.href = url || "#";
+      for (const button of list.querySelectorAll(".item")) {
+        button.setAttribute("aria-current", String(button.dataset.key === `${item.date}|${item.title}`));
+      }
+    }
+
+    function renderHistory(filter = "") {
+      const query = filter.trim().toLocaleLowerCase();
+      const matches = items.filter(item => `${item.title || ""} ${item.date || ""} ${item.explanation || ""}`.toLocaleLowerCase().includes(query));
+      count.textContent = `${matches.length} ${matches.length === 1 ? "record" : "records"}`;
+      list.replaceChildren();
+      if (!matches.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = items.length ? "No saved entries match your search." : "No PostgreSQL records yet. Run the Airflow DAG to begin your archive.";
+        list.append(empty);
+        return;
+      }
+      for (const item of matches) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "item";
+        button.dataset.key = `${item.date}|${item.title}`;
+        button.setAttribute("aria-current", "false");
+        button.setAttribute("aria-label", `Show ${item.title || "untitled APOD"} from ${formatDate(item.date)}`);
+        const thumb = document.createElement("span");
+        thumb.className = "thumb";
+        const url = safeUrl(item.url);
+        if (url && item.media_type !== "video") {
+          const image = document.createElement("img");
+          image.src = url;
+          image.alt = "";
+          image.loading = "lazy";
+          image.addEventListener("error", () => { thumb.textContent = "APOD"; }, {once:true});
+          thumb.append(image);
+        } else thumb.textContent = item.media_type === "video" ? "VIDEO" : "APOD";
+        const copy = document.createElement("span");
+        copy.className = "copy";
+        const itemDate = document.createElement("span");
+        itemDate.className = "item-date";
+        itemDate.textContent = formatDate(item.date);
+        const itemTitle = document.createElement("span");
+        itemTitle.className = "item-title";
+        itemTitle.textContent = item.title || "Untitled NASA APOD";
+        copy.append(itemDate, itemTitle);
+        button.append(thumb, copy);
+        button.addEventListener("click", () => showItem(item));
+        list.append(button);
+      }
+    }
+
+    search.addEventListener("input", event => renderHistory(event.target.value));
+    if (items.length) {
+      showItem(items[0]);
+      renderHistory();
+    }
+  </script>
+</body>
+</html>

@@ -2,8 +2,9 @@ from airflow import DAG
 from airflow.providers.http.operators.http import HttpOperator
 from airflow.decorators import task
 from airflow.providers.postgres.hooks.postgres import PostgresHook
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
+from pathlib import Path
 
 
 #define the DAG
@@ -12,6 +13,12 @@ with DAG(
     start_date=datetime(2024, 1, 1),
     schedule='@daily',
     catchup=False,
+    default_args={
+        "retries": 2,
+        "retry_delay": timedelta(minutes=1),
+        "retry_exponential_backoff": True,
+        "max_retry_delay": timedelta(minutes=10),
+    },
 ) as dag:
 
 # Step 1: Create the table if it doesn't exist
@@ -44,6 +51,7 @@ with DAG(
         http_conn_id="nasa_apod_api",
         endpoint="planetary/apod",
         method="GET",
+        retries=4,
         data={
             "api_key": "{{ conn.nasa_apod_api.extra_dejson.api_key }}"
         },
@@ -86,6 +94,43 @@ with DAG(
             transformed_data['media_type']
         ))
 
+    # Step 5: Build a self-contained dashboard from the records stored in Postgres
+    @task
+    def build_dashboard():
+        postgres_hook = PostgresHook(postgres_conn_id='postgres_default')
+        rows = postgres_hook.get_records("""
+            SELECT title, explanation, url, date, media_type
+            FROM nasa_apod
+            ORDER BY date DESC, id DESC;
+        """)
+        apod_history = [
+            {
+                "title": title,
+                "explanation": explanation,
+                "url": url,
+                "date": apod_date.isoformat() if apod_date else "",
+                "media_type": media_type,
+            }
+            for title, explanation, url, apod_date, media_type in rows
+        ]
+
+        dags_dir = Path(__file__).resolve().parent
+        template_path = dags_dir / "frontend" / "dashboard_template.html"
+        dashboard_path = dags_dir / "nasa_apod_dashboard.html"
+
+        safe_data = json.dumps(apod_history, ensure_ascii=False)
+        safe_data = (
+            safe_data.replace("<", "\\u003c")
+            .replace(">", "\\u003e")
+            .replace("&", "\\u0026")
+        )
+        template = template_path.read_text(encoding="utf-8")
+        dashboard_path.write_text(
+            template.replace("__APOD_DATA__", safe_data),
+            encoding="utf-8",
+        )
+        return str(dashboard_path)
+
 #Step 5: Verify the data DBViewer 
 
 
@@ -96,4 +141,6 @@ api_response = extract_apod_data.output
 # transform
 transformed_data = transform_data(api_response)
 # load
-transformed_data >> load_data(transformed_data) # ensure the data is transformed before loading into the database
+load_task = load_data(transformed_data)
+dashboard_task = build_dashboard()
+load_task >> dashboard_task
